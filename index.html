@@ -4,7 +4,6 @@
 <head>
     <title>💡👉👴</title>
     <meta charset="UTF-8" />
-    <link rel="stylesheet" href="lib/eleme-index.css" />
     <link rel="stylesheet" href="css/common.css" />
     <link rel="stylesheet" href="css/east.css" />
     <style>
@@ -16,6 +15,8 @@
 
 <body οncοntextmenu="return false;" onselectstart="return false">
     <div id="app" v-cloak>
+        <audio id="bgm" src="res/BGM.mp3" style="display: none;"></audio>
+        <div id="loading" class="x-wrapper" v-show="loading.show" style="font-size: 150px;"><p>💡Loading...</p></div>
         <div id="background">
             <div :style="`position: fixed; left: ${background.left}px; top: ${background.top}px;`" @click="getHead()"
                 onclick="audio.click.play()">
@@ -39,7 +40,9 @@
                         style="padding-left: 5px; margin-top: 75px;">
                         💡 {{lang.packs[lang.pack].start}}</p><br>
                     <p class="main-title btn" @click="setMenuRouter(2)" onclick="audio.click.play()">
-                        🌐{{lang.packs[lang.pack].language}}</p>
+                        🌐{{lang.packs[lang.pack].language}}</p><br>
+                    <p class="main-title btn" onclick="audio.click.play(); window.location = 'https://github.com/Liadrinz/grandpa-in-forest'">
+                        📚{{lang.packs[lang.pack].rules}}</p>
                 </div>
                 <div class="submenu" id="lvChoice" v-show="menu.router === 1">
                     <div class="level-btn" @click="enterLevel(level, key)" onclick="audio.click.play()"
@@ -90,10 +93,8 @@
     </div>
 </body>
 <script src="lib/vue.js"></script>
-<script src="lib/eleme-index.js"></script>
 <script src="js/block.js"></script>
 <script src="js/utils.js"></script>
-<script src="js/ui.js"></script>
 <script src="js/level.js"></script>
 <script src="js/levels.js"></script>
 <script src="js/config.js"></script>
@@ -102,10 +103,12 @@
 <script>
     var gRepo = new GameRepo(), cRepo = new ConfigRepo();
     var audio = {
-        click: new Audio("res/click.wav"),
-        bgm: new Audio("res/BGM.mp3")
+        click: new Audio("res/click.wav")
     }
-    audio.bgm.loop = true;
+    var bgm = document.getElementById("bgm");
+    document.onclick = function () {
+        bgm.play();
+    }
     var x, y;
     var board;
     var t;
@@ -116,6 +119,9 @@
             return {
                 gRepo: gRepo,
                 cRepo: cRepo,
+                loading: {
+                    show: true
+                },
                 lang: {
                     languages: settings.languages,
                     pack: 0,
@@ -159,7 +165,11 @@
                 }
             }
         },
+        beforeMount: function () {
+
+        },
         mounted: function () {
+            this.loading.show = false;
             this.lang.pack = cRepo.getLang();
             if (this.lang.pack >= 3) this.switchStyleSheet('west');
             else this.switchStyleSheet('east');
@@ -170,7 +180,6 @@
                 document.getElementById("hand").style.fontSize = `${this.background.handSize}px`;
             },
             newGame() {
-                audio.bgm.play();
                 this.game.failed = false;
                 this.game.levelUp = false;
                 this.game.showNext = false;
@@ -293,12 +302,12 @@
                 this.game.tool = tool;
             },
             switchStyleSheet(style) {
-                let thirdCSS = document.head.getElementsByTagName("link")[2];
-                thirdCSS.remove();
-                thirdCSS = document.createElement("link");
-                thirdCSS.rel = "stylesheet";
-                thirdCSS.href = "./css/" + style + ".css";
-                document.head.appendChild(thirdCSS)
+                let secondCSS = document.head.getElementsByTagName("link")[1];
+                secondCSS.remove();
+                secondCSS = document.createElement("link");
+                secondCSS.rel = "stylesheet";
+                secondCSS.href = "./css/" + style + ".css";
+                document.head.appendChild(secondCSS)
             },
             switchLang(lang) {
                 let id = lang.id;

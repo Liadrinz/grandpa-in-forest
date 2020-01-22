@@ -16,6 +16,7 @@ var packs = [
         "score": "分数",
         "record": "最高纪录",
         "language": "语言",
+        "rules": "规则",
         "success": "你找到👴了!!!",
         "fail": "你已经找不到👴了"
     },
@@ -36,6 +37,7 @@ var packs = [
         "score": "分數",
         "record": "最高紀錄",
         "language": "語言",
+        "rules": "規則",
         "success": "你找到👴了!!!",
         "fail": "你已經找不到👴了"
     },
@@ -56,6 +58,7 @@ var packs = [
         "score": "スコア",
         "record": "最高記録",
         "language": "言語",
+        "rules": "ルール",
         "success": "👴が見つかりました!!!",
         "fail": "もう👴が見つかりません"
     },
@@ -76,6 +79,7 @@ var packs = [
         "score": "Score",
         "record": "Highest",
         "language": "Language",
+        "rules": "Rules",
         "success": "You found 👴!!!",
         "fail": "You can't find 👴 anymore"
     },
@@ -96,6 +100,7 @@ var packs = [
         "score": "But",
         "record": "Élevé",
         "language": "Langue",
+        "rules": "Règles",
         "success": "tu as trouvé 👴!!!",
         "fail": "vous ne pouvez plus trouver 👴"
     }

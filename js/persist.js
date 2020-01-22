@@ -9,7 +9,8 @@ function GameRepo() {
         return 0;
     }
     this.setMaxLevel = function (level) {
-        localStorage.setItem('maxLevel', level);
+        if (level > this.getMaxLevel())
+            localStorage.setItem('maxLevel', level);
     }
     this.getMaxLevel = function () {
         let ml = localStorage.getItem('maxLevel');
