@@ -16,9 +16,9 @@
 
 - Resembles <b>Minesweeper</b>
 - When a 💡light bulb is placed, the brighter the square is, the closer it is to 👴grandpa
-![avatar](https://github.com/Liadrinz/grandpa-in-forest/light-bulb.png)
+![avatar](https://github.com/Liadrinz/grandpa-in-forest/blob/master/light-bulb.png)
 - When a 🔮crystal ball is placed, the number in the square means the distance to the nearest 👴grandpa from the square
-![avatar](https://github.com/Liadrinz/grandpa-in-forest/crystal-ball.png)
+![avatar](https://github.com/Liadrinz/grandpa-in-forest/blob/master/crystal-ball.png)
 - 💡Light bulbs and 🔮crystal balls will cost the score. If your score is not enough to buy the cheapest item, you lose the game
 - If you've found all 👴grandpas in one level at the same time, you win the game
 - If you directly click the square containing a 👴grandpa, you will get a bonus
