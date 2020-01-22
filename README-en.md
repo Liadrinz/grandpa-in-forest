@@ -1,5 +1,5 @@
 # grandpa-in-forest
-👴 H5 Indie Game 💡
+👴 H5 Indie Game 💡 <a href="https://github.com/Liadrinz/grandpa-in-forest/blob/master/README.md">查看中文README</a>
 
 ## Story
 
