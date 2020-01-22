@@ -1,0 +1,21 @@
+.main-title {
+    margin: 20px;
+}
+
+.title {
+    font-size: 100px;
+}
+
+.btn {
+    display: inline-block;
+    font-size: 60px;
+    color: #fff;
+    transition: all 1s;
+}
+
+.btn:hover {
+    cursor: pointer;
+    font-size: 70px;
+    color: #000;
+    transition: all 1s;
+}

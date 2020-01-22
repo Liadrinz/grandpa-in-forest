@@ -1,0 +1,107 @@
+::-webkit-scrollbar { 
+    display: none; 
+}
+
+body {
+    background: #00aa55;
+    color: white;
+    cursor: default;
+}
+
+.main-title {
+    margin: 20px;
+}
+
+.submenu {
+    overflow-y: scroll;
+}
+
+.proc-btn {
+    display: block;
+    font-size: 75px;
+    cursor: pointer;
+}
+
+.level-btn {
+    background: #008833;
+    display: inline-block;
+    font-size: 60px;
+    text-align: center;
+    width: 85px;
+    height: 85px;
+    margin: 10px;
+}
+
+.ye-bk {
+    font-size: 150px;
+    margin: -20px 0;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.hand {
+    display: inline-block;
+    position: absolute;
+    left: 115px;
+    top: 220px;
+    font-size: 150px;
+    height: 400px;
+    cursor: pointer;
+}
+
+.board {
+    width: 550px;
+    height: 550px;
+}
+
+h2 {
+    display: inline-block;
+    margin: 1rem;
+}
+
+.block {
+    text-align: center;
+}
+
+.x-wrapper {
+    position: absolute;
+    left: 50%;
+}
+
+.x-wrapper > * {
+    position: relative;
+    left: -50%;
+}
+
+.y-wrapper {
+    position: absolute;
+    top: 30%;
+}
+
+.y-wrapper > * {
+    position: relative;
+    top: -30%;
+}
+
+.tool {
+    display: inline-block;
+    text-align: left;
+    font-size: 25px;
+}
+
+.tool:hover {
+    cursor: pointer;
+}
+
+.prompt {
+    margin-top: 155px;
+    text-align: center;
+    width: 550px;
+    height: 550px;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+#instruction {
+    display: inline-block;
+    font-size: 20px;
+}

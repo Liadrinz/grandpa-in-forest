@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>💡👉👴</title>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="lib/eleme-index.css" />
+    <link rel="stylesheet" href="css/common.css" />
+    <link rel="stylesheet" href="css/east.css" />
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+
+<body οncοntextmenu="return false;" onselectstart="return false">
+    <div id="app" v-cloak>
+        <div id="background">
+            <div :style="`position: fixed; left: ${background.left}px; top: ${background.top}px;`" @click="getHead()"
+                onclick="audio.click.play()">
+                <span class="ye-bk">{{background.heads[background.head]}}</span><br>
+                <span class="ye-bk">👔</span><br>
+                <span class="ye-bk" style="font-size: 170px; margin-left: 10px;">👖</span><br>
+            </div>
+            <div style="position: fixed;" id="hand" class="hand" @click="getHead()" onclick="audio.click.play()">
+                {{background.hands[background.hand]}}</div>
+        </div>
+        <div id="instruction" style="position: fixed;" v-show="instruction.show">
+            <img width="300" style="position: fixed; left: 150px;" src="res/dialog.png" />
+            <div style="color: black; position: fixed; left: 200px; top: 30px; width: 200px; word-wrap: break-word;">
+                {{getInstructionTexts()[instruction.text]}}</div>
+        </div>
+        <div id="menu" v-show="router === 0">
+            <div class="x-wrapper" style="margin-top: 5%;">
+                <div class="submenu" id="mainMenu" v-show="menu.router === 0">
+                    <p class="main-title title">{{lang.packs[lang.pack].title}}</p>
+                    <p class="main-title btn" @click="setMenuRouter(1)" onclick="audio.click.play()"
+                        style="padding-left: 5px; margin-top: 75px;">
+                        💡 {{lang.packs[lang.pack].start}}</p><br>
+                    <p class="main-title btn" @click="setMenuRouter(2)" onclick="audio.click.play()">
+                        🌐{{lang.packs[lang.pack].language}}</p>
+                </div>
+                <div class="submenu" id="lvChoice" v-show="menu.router === 1">
+                    <div class="level-btn" @click="enterLevel(level, key)" onclick="audio.click.play()"
+                        v-for="level, key in menu.lvChoice.levels">
+                        {{key <= gRepo.getMaxLevel() ? key : '🔒'}}
+                    </div>
+                </div>
+                <div class="submenu" id="settings" v-show="menu.router === 2">
+                    <div v-for="language in lang.languages">
+                        <p class="main-title btn" @click="switchLang(language)" onclick="audio.click.play()">
+                            {{language.name}}</p><br>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="game" v-if="router === 1">
+            <div class="x-wrapper">
+                <h1>{{lang.packs[lang.pack].score}}: {{game.board.score}}</h1>
+                <h2>👴{{game.board.foundCount()}}/{{game.board.yeCount()}}</h2>
+                <h2><span class="tool" v-for="cost, tool in game.tools" @click="switchTool(tool)"
+                        onclick="audio.click.play()"
+                        :style="tool === game.tool ? 'border: 2px solid #f00;' : 'border: 2px solid rgba(0, 0, 0, 0);'">{{tool}}${{cost}}</span>
+                </h2>
+                <h2>{{lang.packs[lang.pack].record}}: {{gRepo.getScore(game.curLevel)}}</h2>
+                <table id="board" class="board" border="1" cellspacing="0">
+                    <tbody>
+                        <tr class="row" v-for="i in [...Array(game.board.x).keys()]">
+                            <td class="block" v-for="j in [...Array(game.board.y).keys()]" :id="i + '-' + j"
+                                @click="lit(game.board.matrix[i][j])" onclick="audio.click.play()">
+                                {{game.board.matrix[i][j].getDisplay()}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div v-show="game.showNext" class="x-wrapper">
+                <div v-show="game.levelUp" class="prompt">
+                    <h1>😀{{lang.packs[lang.pack].success}}</h1>
+                    <p class="proc-btn" @click="toMainMenu()" onclick="audio.click.play()">📜</p>
+                    <p class="proc-btn" @click="nextLevel()" onclick="audio.click.play()">👉</p>
+                </div>
+                <div v-show="game.failed" class="prompt">
+                    <h1>😟{{lang.packs[lang.pack].fail}}</h1>
+                    <p class="proc-btn" @click="toMainMenu()" onclick="audio.click.play()">📜</p>
+                    <p class="proc-btn" @click="restart()" onclick="audio.click.play()">🔁</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="lib/vue.js"></script>
+<script src="lib/eleme-index.js"></script>
+<script src="js/block.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/level.js"></script>
+<script src="js/levels.js"></script>
+<script src="js/config.js"></script>
+<script src="js/language.js"></script>
+<script src="js/persist.js"></script>
+<script>
+    var gRepo = new GameRepo(), cRepo = new ConfigRepo();
+    var audio = {
+        click: new Audio("res/click.wav"),
+        bgm: new Audio("res/BGM.mp3")
+    }
+    audio.bgm.loop = true;
+    var x, y;
+    var board;
+    var t;
+    var yc = 1
+    var app = new Vue({
+        el: '#app',
+        data: function () {
+            return {
+                gRepo: gRepo,
+                cRepo: cRepo,
+                lang: {
+                    languages: settings.languages,
+                    pack: 0,
+                    packs: packs
+                },
+                background: {
+                    left: 120,
+                    top: 120,
+                    head: 0,
+                    heads: ['👴', '👶', '🧒', '👦', '🧑', '👱', '👨', '🧔', '🤴', '👲'],
+                    hand: 0,
+                    hands: ['👐', '👈'],
+                    handSize: 150
+                },
+                instruction: {
+                    show: false,
+                    text: 0
+                },
+                router: 0,
+                menu: {
+                    router: 0,
+                    mainMenu: {
+
+                    },
+                    lvChoice: {
+                        levels: globalLvList
+                    },
+                    settings: {
+
+                    }
+                },
+                game: {
+                    curLevel: -1,
+                    board: board,
+                    blockStyle: '',
+                    levelUp: false,
+                    failed: false,
+                    showNext: false,
+                    tool: '',
+                    tools: null
+                }
+            }
+        },
+        mounted: function () {
+            this.lang.pack = cRepo.getLang();
+            if (this.lang.pack >= 3) this.switchStyleSheet('west');
+            else this.switchStyleSheet('east');
+        },
+        methods: {
+            changeHandSize(newSize) {
+                this.background.handSize = newSize;
+                document.getElementById("hand").style.fontSize = `${this.background.handSize}px`;
+            },
+            newGame() {
+                audio.bgm.play();
+                this.game.failed = false;
+                this.game.levelUp = false;
+                this.game.showNext = false;
+            },
+            getHead() {
+                this.instruction.show = false;
+                this.background.head++;
+                this.background.head %= this.background.heads.length;
+                if (this.background.hand === 1) {
+                    if (this.router === 0) {
+                        this.router = 0;
+                        this.menu.router = 0;
+                        this.background.hand = 0;
+                        this.changeHandSize(150);
+                    } else {
+                        this.router = 0;
+                        this.menu.router = 1;
+                    }
+                }
+            },
+            setRootRouter(num) {
+                this.router = num;
+            },
+            setMenuRouter(num) {
+                this.menu.router = num;
+                if (num === 0) {
+                    this.background.hand = 0;
+                    this.changeHandSize(150);
+                } else {
+                    this.background.hand = 1;
+                    this.changeHandSize(100);
+                }
+            },
+            enterLevel(level, key) {
+                if (key > gRepo.getMaxLevel()) return;
+                this.instruction.show = false;
+                this.newGame();
+                this.game.board = level.getBoard();
+                this.router = 1;
+                this.game.curLevel = key;
+                this.game.tool = level.toolInfo.tool;
+                this.game.tools = level.toolInfo.tools;
+                if (this.game.board.yeCount() === 0) {
+                    this.instruction.text = 0;
+                    this.instruction.show = true;
+                }
+                if (key == 8) {
+                    this.instruction.text = 3;
+                    this.instruction.show = true;
+                } else if (key == 12) {
+                    this.instruction.text = 4;
+                    this.instruction.show = true;
+                }
+            },
+            getInstructionTexts() {
+                return this.lang.packs[this.lang.pack].instructions;
+            },
+            toMainMenu() {
+                this.router = 0;
+                this.menu.router = 0;
+            },
+            restart() {
+                this.enterLevel(globalLvList[this.game.curLevel], this.game.curLevel);
+            },
+            nextLevel() {
+                this.enterLevel(globalLvList[++this.game.curLevel], this.game.curLevel);
+            },
+            lit(block) {
+                if (this.game.levelUp || this.game.failed) return;
+                if (this.instruction.show) {
+                    ++this.instruction.text
+                    if (this.game.curLevel == 1) {
+                        if (this.instruction.text === 3) {
+                            this.instruction.show = false;
+                        }
+                    } else if (this.game.curLevel == 8) {
+                        if (this.instruction.text === 4) {
+                            this.instruction.show = false;
+                        }
+                    } else if (this.game.curLevel == 12) {
+                        if (this.instruction.text === 8) {
+                            this.instruction.show = false;
+                        }
+                    }
+                }
+                if (this.game.board.yeCount() === 0) {
+                    let ni = block.i, nj = block.j;
+                    this.instruction.show = true;
+                    this.game.board.set((ni + 1) % this.game.board.x, (nj + 1) % this.game.board.y, '👴');
+                }
+                if (!this.game.levelUp && !this.game.failed) {
+                    this.game.board.moveBug();
+                    this.game.board.moveYe();
+                }
+                if (block.emoji === '👴') {
+                    if (block.creditFlag) {
+                        this.game.board.score += 50;
+                        block.creditFlag = false;
+                    }
+                    block.forceVisible = !block.forceVisible;
+                } else {
+                    this.game.board.set(block.i, block.j, this.game.tool, cost = this.game.tools[this.game.tool]);
+                }
+                if (this.game.board.yeCount() === this.game.board.foundCount()) {
+                    this.game.levelUp = true;
+                    setTimeout(() => {
+                        gRepo.saveScore(this.game.curLevel, this.game.board.score);
+                        gRepo.setMaxLevel(parseInt(this.game.curLevel) + 1);
+                        this.game.showNext = true;
+                    }, 500);
+                }
+                if (this.game.board.score < 20) {
+                    this.game.failed = true;
+                    setTimeout(() => {
+                        this.game.showNext = true;
+                    }, 500);
+                }
+            },
+            switchTool(tool) {
+                this.game.tool = tool;
+            },
+            switchStyleSheet(style) {
+                let thirdCSS = document.head.getElementsByTagName("link")[2];
+                thirdCSS.remove();
+                thirdCSS = document.createElement("link");
+                thirdCSS.rel = "stylesheet";
+                thirdCSS.href = "./css/" + style + ".css";
+                document.head.appendChild(thirdCSS)
+            },
+            switchLang(lang) {
+                let id = lang.id;
+                cRepo.saveLang(id);
+                if (this.lang.pack < 3 && id >= 3) {
+                    this.switchStyleSheet('west');
+                } else if (this.lang.pack >= 3 && id < 3) {
+                    this.switchStyleSheet('east');
+                }
+                this.lang.pack = parseInt(id);
+                this.toMainMenu();
+                this.background.hand = 0;
+                this.changeHandSize(150);
+            }
+        }
+    })
+</script>
+
+</html>
